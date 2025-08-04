@@ -1,0 +1,16 @@
+﻿@model DashboardViewModel
+
+<div class="card-row">
+    <div class="card card-blue">
+        <h3>Total Assets</h3>
+        <p class="count">@Model.TotalAssets</p>
+    </div>
+    <div class="card card-green">
+        <h3>Assigned Assets</h3>
+        <p class="count">@Model.AssignedAssets</p>
+    </div>
+    <div class="card card-yellow">
+        <h3>Under Maintenance</h3>
+        <p class="count">@Model.UnderMaintenance</p>
+    </div>
+</div>

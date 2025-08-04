@@ -275,3 +275,28 @@ body {
 .card.card-purple.chart-card {
     margin-left: -20px;
 }
+
+.metric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+    .metric-header .title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .metric-header .count {
+        font-size: 1.2rem;
+        font-weight: bold;
+        background: rgba(255,255,255,0.1);
+        padding: 4px 10px;
+        border-radius: 6px;
+        white-space: nowrap;
+    }
+
+
+
