@@ -1,0 +1,49 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    bool isAjax = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    Layout = isAjax ? null : "_Layout";
+}
+
+<div class="top-right-button">
+    <button class="generate-btn">Generate Report</button>
+</div>
+
+<div class="card-row">
+    <div class="card card-blue">
+        <h3>Total Assets</h3>
+    </div>
+    <div class="card card-green">
+        <h3>Assigned Assets</h3>
+    </div>
+    <div class="card card-yellow">
+        <h3>Under Maintenance</h3>
+    </div>
+</div>
+
+<div class="card-row chart-grid">
+    <div class="card chart-card card-purple">
+        <h3>Assets By Category</h3>
+        <h5>Overview of assets and their status</h5>
+        <div class="chart-placeholder">[Pie Chart]</div>
+    </div>
+    <div class="card chart-card card-orange lower-right">
+        <h3>Bar Chart</h3>
+        <div class="chart-placeholder">[Bar Chart]</div>
+    </div>
+</div>
+
+<div class="card-row chart-grid">
+    <div class="card card-lightgray">
+        <h3>Recent Asset Assignments</h3>
+    </div>
+    <div class="card card-pink">
+        <h3>Maintenance Alerts</h3>
+    </div>
+</div>
+
+<div class="card-row chart-grid">
+    <div class="card card-mint">
+        <h3>Under Maintenance</h3>
+    </div>
+</div>
+

@@ -1,0 +1,118 @@
+﻿@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Asset Management System</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <style>
+        .submenu, .submenutwo {
+            display: none;
+        }
+
+            .submenu.show, .submenutwo.show {
+                display: block;
+            }
+
+        .collapsible > a.active, .collapsibletwo > a.active {
+            font-weight: bold;
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        .submenu li a.active, .submenutwo li a.active {
+            font-weight: bold;
+            border-left: 3px solid #1abc9c;
+            border-radius: 3px;
+        }
+
+        .sidebar > ul > li > a.active {
+            border-left: 4px solid #1abc9c;
+            padding-left: 20px;
+            font-weight: bold;
+            color: white;
+        }
+    </style>
+</head>
+
+
+<body>
+    <div class="top-header">
+        <h1 class="header-title">
+            <a>ASSET MANAGEMENT SYSTEM</a>
+        </h1>
+    </div>
+
+    <div class="container">
+        <aside class="sidebar">
+            <ul>
+                <li>
+                    <a asp-controller="Home" asp-action="Index"
+                       class="@(currentController == "Home" ? "active" : "")">Dashboard</a>
+                </li>
+
+                <li class="collapsible">
+                    <a href="#" class="toggle-link @(currentController == "Asset" ? "active" : "")">
+                        Asset Management ▾
+                    </a>
+                    <ul class="submenu @(currentController == "Asset" ? "show" : "")">
+                        <li>
+                            <a asp-controller="Asset" asp-action="Registration"
+                               class="@(currentAction == "Registration" ? "active" : "")">Asset Registration</a>
+                        </li>
+                        <li>
+                            <a asp-controller="Asset" asp-action="Assignment"
+                               class="@(currentAction == "Assignment" ? "active" : "")">Asset Assignment</a>
+                        </li>
+                        <li>
+                            <a asp-controller="Asset" asp-action="Tagging"
+                               class="@(currentAction == "Tagging" ? "active" : "")">Asset Tagging</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="collapsibletwo @(currentController == "SecurityAudit" ? "active-parent" : "")">
+                    <a href="#" class="toggle-link @(currentController == "SecurityAudit" ? "active" : "")">
+                        Security & Audit ▾
+                    </a>
+                    <ul class="submenutwo @(currentController == "SecurityAudit" ? "show" : "")">
+                        <li>
+                            <a asp-controller="SecurityAudit" asp-action="AuditTrial"
+                               class="@(currentAction == "AuditTrial" ? "active" : "")">Audit Trial</a>
+                        </li>
+                        <li>
+                            <a asp-controller="SecurityAudit" asp-action="VulnerabilityTracking"
+                               class="@(currentAction == "VulnerabilityTracking" ? "active" : "")">Vulnerability Tracking</a>
+                        </li>
+                        <li>
+                            <a asp-controller="SecurityAudit" asp-action="LogAlerts"
+                               class="@(currentAction == "LogAlerts" ? "active" : "")">Access Log Alerts</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a asp-controller="Contracts" asp-action="Index"
+                       class="@(currentController == "Contracts" ? "active" : "")">Contracts & Warranty</a>
+                </li>
+                <li>
+                    <a asp-controller="Reports" asp-action="Index"
+                       class="@(currentController == "Reports" ? "active" : "")">Reports</a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="dashboard">
+            <div id="ajax-container">
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,202 @@
+﻿@model IEnumerable<AssetManagementProject.Models.Asset>
+
+
+@{
+    ViewData["Title"] = "Asset Registration";
+    Layout = null;
+}
+
+
+<style>
+
+    h2 {
+        color: white;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .registration-container {
+        max-width: 1000px;
+        margin: auto;
+        background-color: #1f1f1f;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        gap: 20px;
+    }
+
+        .form-group label {
+            flex: 1;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select {
+            flex: 2;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+    .button-group {
+        text-align: center;
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+        .button-group button {
+            padding: 10px 20px;
+            border: none;
+            margin: 0 10px;
+            border-radius: 8px;
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+            .button-group button:hover {
+                background-color: #0056b3;
+            }
+
+    table {
+        width: 100%;
+        margin-top: 40px;
+        border-collapse: collapse;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #007bff;
+        color: white;
+    }
+
+    tr:hover {
+        background-color: #1c3b3f;
+        cursor: pointer;
+    }
+</style>
+
+<div class="registration-container">
+    <h2>Asset Registration</h2>
+
+    <form method="post" asp-controller="Asset" asp-action="Register">
+        <div class="form-group">
+            <label for="assetId">Asset ID</label>
+            <input type="text" id="assetId" name="AssetId" placeholder="Enter Asset ID">
+        </div>
+
+        <div class="form-group">
+            <label for="assetName">Asset Name</label>
+            <input type="text" id="assetName" name="AssetName" placeholder="Enter Asset Name">
+        </div>
+
+        <div class="form-group">
+            <label for="assetType">Asset Type</label>
+            <select id="assetType" name="AssetType">
+                <option value="">Select Type</option>
+                <option>Laptop</option>
+                <option>Monitor</option>
+                <option>Printer</option>
+
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="count">Count</label>
+            <input type="number" id="count" name="Count" placeholder="e.g. 5">
+        </div>
+
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" name="Status">
+                <option>Active</option>
+                <option>Issued</option>
+                <option>Damaged</option>
+                <option>Retired</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="warranty">Warranty End Date</label>
+            <input type="date" id="warranty" name="WarrantyEnd">
+        </div>
+
+        <div class="form-group">
+            <label for="storeItemId">Store Item ID</label>
+            <input type="text" id="storeItemId" name="StoreItemId" placeholder="Optional">
+        </div>
+
+        <div class="form-group">
+            <label for="storeItemCode">Store Item Code</label>
+            <input type="text" id="storeItemCode" name="StoreItemCode" placeholder="Optional">
+        </div>
+
+        <div class="form-group">
+            <label for="vendor">Vendor</label>
+            <select id="vendor" name="VendorId">
+                <option value="">Select Vendor</option>
+                <option>HP</option>
+                <option>Dell</option>
+                <option>Lenovo</option>
+                <!-- Populate from Vendor table -->
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="trackingNo">Tracking Number (RFID)</label>
+            <input type="text" id="trackingNo" name="TrackingNumber" placeholder="Optional">
+        </div>
+
+        <div class="form-group">
+            <label for="trackingStatus">Tracking Status</label>
+            <select id="trackingStatus" name="TrackingStatus">
+                <option>Tracked</option>
+                <option>Not Tracked</option>
+            </select>
+        </div>
+
+        <div class="button-group">
+            <button type="submit">Register Asset</button>
+            <button type="reset">Clear Form</button>
+            <button type="button" onclick="location.href='/Asset/ViewAll'">View All Assets</button>
+        </div>
+    </form>
+
+    <hr />
+
+    <h3 style="text-align:center; margin-top:40px;">Registered Assets</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Asset ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Count</th>
+                <th>Status</th>
+                <th>Vendor</th>
+                <th>Tracking No</th>
+                <th>Warranty End</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr>
+            </tr>
+        </tbody>
+    </table>
+</div>
