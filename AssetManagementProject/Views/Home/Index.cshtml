@@ -35,7 +35,7 @@
     <div class="card chart-card card-purple">
         <h3>Assets By Category</h3>
         <h5>Overview of assets and their status</h5>
-        <div class="chart-placeholder">[Pie Chart]</div>
+        <canvas id="assetsByCategoryChart" width="400" height="400"></canvas>
     </div>
     <div class="card chart-card card-orange lower-right">
         <h3>Bar Chart</h3>
@@ -58,3 +58,40 @@
     </div>
 </div>
 
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('assetsByCategoryChart').getContext('2d');
+
+        const labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                    Model.AssetsByCategory.Select(c => c.Category)
+            ));
+
+    const dataValues = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                Model.AssetsByCategory.Select(c => c.Count)
+        ));
+
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Assets by Category',
+                data: dataValues,
+                backgroundColor: [
+                    '#6a5acd', '#20b2aa', '#ffcc00', '#ff6347', '#2e8b57', '#ff8c00', '#8b0000'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+</script>
+}
