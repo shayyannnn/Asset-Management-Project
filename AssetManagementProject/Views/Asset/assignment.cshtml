@@ -88,53 +88,59 @@
 <div class="registration-container">
     <h2>Asset Assignment</h2>
 
-    <form method="post" asp-controller="Asset" asp-action="Assign">
-        <div class="form-group">
-            <label for="employment_id">Employment ID</label>
-            <input type="number" id="employment_id" name="EmploymentId" placeholder="Enter Employment ID" required />
-        </div>
+    <div class="button-group">
+        <button id="toggleAssignButton" type="button" onclick="toggleAssignForm()">Assign Asset</button>
+    </div>
 
-        <div class="form-group">
-            <label for="asset_id">Asset ID</label>
-            <input type="text" id="asset_id" name="AssetId" placeholder="Enter Asset ID" required />
-        </div>
+    <!-- Hidden Form -->
+    <div id="assignmentForm" style="display: none;">
+        <form method="post" asp-controller="Asset" asp-action="Assign">
+            <div class="form-group">
+                <label for="employment_id">Employment ID</label>
+                <input type="number" id="employment_id" name="EmploymentId" placeholder="Enter Employment ID" required />
+            </div>
 
-        <div class="form-group">
-            <label for="issued_to">Issued To</label>
-            <input type="text" id="issued_to" name="IssuedTo" placeholder="Full Name" required />
-        </div>
+            <div class="form-group">
+                <label for="asset_id">Asset ID</label>
+                <input type="text" id="asset_id" name="AssetId" placeholder="Enter Asset ID" required />
+            </div>
 
-        <div class="form-group">
-            <label for="designation">Designation</label>
-            <input type="text" id="designation" name="Designation" placeholder="e.g. Manager" />
-        </div>
+            <div class="form-group">
+                <label for="issued_to">Issued To</label>
+                <input type="text" id="issued_to" name="IssuedTo" placeholder="Full Name" required />
+            </div>
 
-        <div class="form-group">
-            <label for="department_id">Department</label>
-            <input type="text" id="department_id" name="DepartmentId" placeholder="Department Name or ID" />
-        </div>
+            <div class="form-group">
+                <label for="designation">Designation</label>
+                <input type="text" id="designation" name="Designation" placeholder="e.g. Manager" />
+            </div>
 
-        <div class="form-group">
-            <label for="date_assigned">Date Assigned</label>
-            <input type="date" id="date_assigned" name="DateAssigned" />
-        </div>
+            <div class="form-group">
+                <label for="department_id">Department</label>
+                <input type="text" id="department_id" name="DepartmentId" placeholder="Department Name or ID" />
+            </div>
 
-        <div class="form-group">
-            <label for="building">Building</label>
-            <input type="text" id="building" name="Building" placeholder="e.g. Block A" />
-        </div>
+            <div class="form-group">
+                <label for="date_assigned">Date Assigned</label>
+                <input type="date" id="date_assigned" name="DateAssigned" />
+            </div>
 
-        <div class="form-group">
-            <label for="room">Room</label>
-            <input type="text" id="room" name="Room" placeholder="e.g. Room 201" />
-        </div>
+            <div class="form-group">
+                <label for="building">Building</label>
+                <input type="text" id="building" name="Building" placeholder="e.g. Block A" />
+            </div>
 
-        <div class="button-group">
-            <button type="submit">Assign Asset</button>
-            <button type="reset">Clear</button>
-            <button type="button" onclick="location.href='/Asset/ViewAssignments'">View All Assignments</button>
-        </div>
-    </form>
+            <div class="form-group">
+                <label for="room">Room</label>
+                <input type="text" id="room" name="Room" placeholder="e.g. Room 201" />
+            </div>
+
+            <div class="button-group">
+                <button type="submit">Assign Asset</button>
+                <button type="reset">Clear</button>
+            </div>
+        </form>
+    </div>
 
     <hr />
 
@@ -155,6 +161,25 @@
             </tr>
         </thead>
         <tbody>
+            @* Populate rows dynamically here *@
+            <tr>
+                <td colspan="8">No assets available.</td>
+            </tr>
         </tbody>
     </table>
 </div>
+
+<script>
+    function toggleAssignForm() {
+        const form = document.getElementById("assignmentForm");
+        const button = document.getElementById("toggleAssignButton");
+
+        if (form.style.display === "none") {
+            form.style.display = "block";
+            button.style.display = "none";
+        } else {
+            form.style.display = "none";
+            button.style.display = "inline-block";
+        }
+    }
+</script>
