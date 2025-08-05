@@ -283,20 +283,54 @@ body {
     gap: 0.5rem;
 }
 
-    .metric-header .title {
+.metric-header .title {
         font-size: 1rem;
         font-weight: 600;
         margin: 0;
-    }
+ }
 
-    .metric-header .count {
+ .metric-header .count {
         font-size: 1.2rem;
         font-weight: bold;
         background: rgba(255,255,255,0.1);
         padding: 4px 10px;
         border-radius: 6px;
         white-space: nowrap;
+  } 
+
+.recent-assignments {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+    .recent-assignments li {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 12px;
+        margin-bottom: 4px;
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 6px;
+        font-size: 0.95rem;
+        color: #777;
     }
 
+        .recent-assignments li:nth-child(even) {
+            background: rgba(0, 0, 0, 0.08);
+        }
 
+    .recent-assignments .asset-name {
+        font-weight: bold;
+        color: #777;
+    }
+
+    .recent-assignments .issued-to {
+        color: #777;
+        font-style: italic;
+    }
+
+    .recent-assignments .date-assigned {
+        font-size: 0.85rem;
+        color: #777;
+    }
 

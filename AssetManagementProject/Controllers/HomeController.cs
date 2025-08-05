@@ -30,12 +30,25 @@ namespace AssetManagementProject.Controllers
               })
              .ToListAsync();
 
+            var recentAssignments = await _context.Issuances
+             .OrderByDescending(a => a.DateAssigned)
+             .Take(5)
+             .Select(a => new RecentAssignmentData
+             {
+             AssetName = a.Asset.AssetName,
+             IssuedTo = a.IssuedTo,
+             DateAssigned = (DateOnly)a.DateAssigned
+             })
+            .ToListAsync();
+
+
             var model = new DashboardViewModel
             {
                 TotalAssets = totalAssets,
                 AssignedAssets = assignedAssets,
                 UnderMaintenance = underMaintenance,
-                AssetsByCategory = assetsByCategory
+                AssetsByCategory = assetsByCategory,
+                RecentAssignments = recentAssignments
             };
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -46,7 +59,7 @@ namespace AssetManagementProject.Controllers
 
         [HttpPost]
         public async Task<IActionResult> GenerateReport()
-        {
+        {  
             var totalAssets = await _context.Assets.CountAsync();
             var assignedAssets = await _context.Assets.CountAsync(a => a.Status == "Issued");
            var underMaintenance = await _context.Assets.CountAsync(a => a.Status == "UnderMaintenance");
