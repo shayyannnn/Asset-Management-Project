@@ -204,6 +204,7 @@ body {
 .card-lightgray {
     background-color: #2e2e2e;
     border: 1px solid #888;
+    width: fit-content;
 }
 
 .card-pink {
@@ -305,19 +306,22 @@ body {
 }
 
     .recent-assignments li {
-        display: flex;
-        justify-content: space-between;
-        padding: 8px 12px;
+        display: grid;
+        grid-template-columns: 150px 120px 100px;
+        justify-content: flex-start;
+        gap: 0.5rem;
+        padding: 6px 12px;
         margin-bottom: 4px;
         background: rgba(0, 0, 0, 0.05);
         border-radius: 6px;
         font-size: 0.95rem;
         color: #777;
+        width: fit-content;
     }
 
-        .recent-assignments li:nth-child(even) {
+    .recent-assignments li:nth-child(even) {
             background: rgba(0, 0, 0, 0.08);
-        }
+    }
 
     .recent-assignments .asset-name {
         font-weight: bold;
