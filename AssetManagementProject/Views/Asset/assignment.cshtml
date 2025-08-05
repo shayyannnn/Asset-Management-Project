@@ -40,9 +40,12 @@
         }
 
     .button-group {
-        text-align: center;
+        ext-align: center;
         margin-top: 30px;
         margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
         .button-group button {
@@ -83,17 +86,38 @@
         background-color: #1c3b3f;
         cursor: pointer;
     }
+
+    #assignmentForm {
+        transform: scaleY(0);
+        opacity: 0;
+        transform-origin: top;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        overflow: hidden;
+        margin-top: 20px;
+        display: block;
+        height: 0;
+    }
+
+        #assignmentForm.show {
+            transform: scaleY(1);
+            opacity: 1;
+            height: auto;
+        }
+
+    
 </style>
 
 <div class="registration-container">
-    <h2>Asset Assignment</h2>
+
 
     <div class="button-group">
+        <h2>Asset Assignment</h2>
         <button id="toggleAssignButton" type="button" onclick="toggleAssignForm()">Assign Asset</button>
     </div>
 
     <!-- Hidden Form -->
-    <div id="assignmentForm" style="display: none;">
+    <div id="assignmentForm" class="">
+        >
         <form method="post" asp-controller="Asset" asp-action="Assign">
             <div class="form-group">
                 <label for="employment_id">Employment ID</label>
@@ -168,17 +192,16 @@
         </tbody>
     </table>
 </div>
-
 <script>
     function toggleAssignForm() {
         const form = document.getElementById("assignmentForm");
         const button = document.getElementById("toggleAssignButton");
 
-        if (form.style.display === "none") {
-            form.style.display = "block";
+        form.classList.toggle("show");
+
+        if (form.classList.contains("show")) {
             button.style.display = "none";
         } else {
-            form.style.display = "none";
             button.style.display = "inline-block";
         }
     }

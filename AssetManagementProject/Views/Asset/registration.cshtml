@@ -6,7 +6,7 @@
     ViewData["Title"] = "Asset Registration";
     Layout = null;
 }
-
+ 
 <style>
     h2 {
         color: white;
@@ -127,6 +127,21 @@
             margin-left: 10px;
             cursor: pointer;
         }
+
+    #formContainer {
+        overflow: hidden;
+        max-height: 0;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: max-height 0.4s ease, opacity 0.4s ease, transform 0.4s ease;
+    }
+
+        #formContainer.expanded {
+            max-height: 2000px; /* large enough to fit all contents */
+            opacity: 1;
+            transform: translateY(0);
+        }
+
 </style>
 
 <div class="registration-container">
@@ -150,6 +165,7 @@
                     <option>Laptop</option>
                     <option>Monitor</option>
                     <option>Printer</option>
+                    <option>PC</option>
                 </select>
             </div>
 
@@ -196,6 +212,7 @@
 
             <div class="button-group">
                 <button type="submit">Register Asset</button>
+                <button type="button" onclick="collapseForm()">Cancel</button>
                 <button type="reset">Clear</button>
             </div>
         </form>
@@ -246,17 +263,26 @@
 </div>
 
 <script>
-    function toggleForm() {
+        function toggleForm() {
         const form = document.getElementById("formContainer");
         const registerButton = document.getElementById("toggleRegisterButton");
 
-        if (form.style.display === "none") {
-            form.style.display = "block";
-            registerButton.style.display = "none";
-        } else {
-            form.style.display = "none";
+        form.style.display = "block"; 
+        form.classList.add("expanded");
+        registerButton.style.display = "none";
+    }
+
+
+    function collapseForm() {
+        const form = document.getElementById("formContainer");
+        const registerButton = document.getElementById("toggleRegisterButton");
+
+        form.classList.remove("expanded");
+
+        // Delay showing the button until animation completes
+        setTimeout(() => {
             registerButton.style.display = "inline-block";
-        }
+        }, 400); // Adjust based on your CSS transition time
     }
 
     function showToast(message, isSuccess = true) {
@@ -281,10 +307,7 @@
         try {
             const resp = await fetch('@Url.Action("RegisterAsset", "Asset")', {
                 method: 'POST',
-                body: formData,
-                headers: {
-                    // antiforgery token is already in formData
-                }
+                body: formData
             });
 
             const data = await resp.json();
@@ -310,8 +333,9 @@
                     tbody.innerHTML = "";
                 }
                 tbody.prepend(newRow);
+
                 form.reset();
-                toggleForm();
+                collapseForm();
             } else {
                 let msg = data?.message || "Failed to register asset.";
                 showToast(msg, false);
@@ -322,3 +346,4 @@
         }
     });
 </script>
+
