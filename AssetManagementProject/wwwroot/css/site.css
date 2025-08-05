@@ -169,53 +169,67 @@ body {
     min-height: 200px;
 }
 
-.lower-right {
-    grid-column: 2;
-    grid-row: 2;
-    margin-left: 15px;
-    margin-top: 10px;
-}
 
 .card-blue {
     background-color: #1e3a5f;
     border: 1px solid #3b82f6;
+    border-radius: 8px
 }
 
 .card-green {
     background-color: #1b3c2c;
     border: 1px solid #22c55e;
+    border-radius: 8px
 }
 
 .card-yellow {
     background-color: #4b420e;
     border: 1px solid #eab308;
+    border-radius: 8px
 }
 
 .card-purple {
     background-color: #3a275e;
     border: 1px solid #a78bfa;
+    border-radius: 8px
 }
 
 .card-orange {
     background-color: #5a2e10;
     border: 1px solid #f97316;
+    margin-left: 40px; /* reduced from 200px to 40px */
+    border-radius: 8px
 }
+
 
 .card-lightgray {
     background-color: #2e2e2e;
     border: 1px solid #888;
-    width: fit-content;
+    margin-right: 40px; /* Adjust value as needed */
+    margin-top: 30px;
+    border-radius: 8px
 }
+
 
 .card-pink {
     background-color: #3f1d2d;
     border: 1px solid #f472b6;
+    border-radius: 8px
 }
 
 .card-mint {
     background-color: #1d4033;
     border: 1px solid #34d399;
+    margin: 0px 0px; /* Match the spacing of other full-width cards */
+    padding: 20px;
+    margin-top: 30px;
+    border-radius: 8px;
 }
+
+.full-width {
+    width: calc(100% - 60px); /* Matches margin of 30px on each side */
+}
+
 
 .top-right-button {
     display: flex;
@@ -237,27 +251,15 @@ body {
     transition: background-color 0.3s ease;
 }
 
-    .generate-btn:hover {
+ .generate-btn:hover {
         background-color: #15803d;
     }
 
-.card-row.chart-grid {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: 1fr 1fr;
-    gap: 20px;
-    padding: 0 20px;
-    margin-top: 30px;
+.chart-grid {
+    padding-left: 20px; /* affects all child cards equally */
 }
 
-.card-row .card-lightgray {
-    grid-column: 1;
-    grid-row: 1;
-}
 
-.card-row .card-pink {
-    grid-column: 2;
-    grid-row: 2;
-}
 
 .submenu {
     display: none;
@@ -306,17 +308,14 @@ body {
 }
 
     .recent-assignments li {
-        display: grid;
-        grid-template-columns: 150px 120px 100px;
-        justify-content: flex-start;
-        gap: 0.5rem;
+        display: flex;
+        justify-content: space-between;
         padding: 6px 12px;
-        margin-bottom: 4px;
+        margin-bottom: 4px; 
         background: rgba(0, 0, 0, 0.05);
         border-radius: 6px;
         font-size: 0.95rem;
         color: #777;
-        width: fit-content;
     }
 
     .recent-assignments li:nth-child(even) {
@@ -337,4 +336,7 @@ body {
         font-size: 0.85rem;
         color: #777;
     }
+    .full-width {
+    width: 100%;
+}
 

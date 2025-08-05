@@ -205,7 +205,7 @@
                     <option value="">Select Vendor</option>
                     @foreach (var v in (List<AssetManagementProject.Models.Vendor>)ViewBag.Vendors)
                     {
-                        <option value="@v.VendorId">@v.Name</option>
+                        <option value="@v.VendorId">@v.Name / @v.ContactPerson</option>
                     }
                 </select>
             </div>
