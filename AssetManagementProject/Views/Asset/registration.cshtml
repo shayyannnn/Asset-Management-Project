@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<AssetManagementProject.Models.Asset>
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery antiforgery
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 
 @{
     ViewData["Title"] = "Asset Registration";
@@ -19,6 +21,7 @@
         padding: 30px;
         border-radius: 12px;
         box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        position: relative;
     }
 
     .form-group {
@@ -31,14 +34,17 @@
         .form-group label {
             flex: 1;
             font-weight: bold;
+            color: #ddd;
         }
 
         .form-group input,
         .form-group select {
             flex: 2;
             padding: 8px;
-            border: 1px solid #ccc;
+            border: 1px solid #444;
             border-radius: 6px;
+            background: #1f2a33;
+            color: #fff;
         }
 
     .button-group {
@@ -48,6 +54,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 10px;
     }
 
         .button-group button {
@@ -71,12 +78,16 @@
         margin-top: 40px;
         border-collapse: collapse;
         box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        background: #0f1e27;
+        color: #eee;
+        border-radius: 6px;
+        overflow: hidden;
     }
 
     th, td {
         padding: 12px;
         text-align: center;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #1f3a4f;
     }
 
     th {
@@ -88,32 +99,53 @@
         background-color: #1c3b3f;
         cursor: pointer;
     }
+
+    #toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        background: #28a745;
+        color: white;
+        border-radius: 8px;
+        display: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 1000;
+        min-width: 250px;
+        font-weight: 500;
+    }
+
+        #toast.error {
+            background: #c0392b;
+        }
+
+        #toast button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
 </style>
 
 <div class="registration-container">
-
-
     <div class="button-group">
         <h2>Asset Registration</h2>
         <button id="toggleRegisterButton" type="button" onclick="toggleForm()">Register Asset</button>
     </div>
 
-    <!-- 🔒 Form hidden initially -->
     <div id="formContainer" style="display: none;">
-        <form method="post" asp-controller="Asset" asp-action="Register">
-            <div class="form-group">
-                <label for="assetId">Asset ID</label>
-                <input type="text" id="assetId" name="AssetId" placeholder="Enter Asset ID">
-            </div>
-
+        <form id="assetForm" method="post" asp-controller="Asset" asp-action="RegisterAsset">
+            @Html.AntiForgeryToken()
             <div class="form-group">
                 <label for="assetName">Asset Name</label>
-                <input type="text" id="assetName" name="AssetName" placeholder="Enter Asset Name">
+                <input type="text" id="assetName" name="AssetName" placeholder="Enter Asset Name" required>
             </div>
 
             <div class="form-group">
                 <label for="assetType">Asset Type</label>
-                <select id="assetType" name="AssetType">
+                <select id="assetType" name="AssetType" required>
                     <option value="">Select Type</option>
                     <option>Laptop</option>
                     <option>Monitor</option>
@@ -123,12 +155,12 @@
 
             <div class="form-group">
                 <label for="count">Count</label>
-                <input type="number" id="count" name="Count" placeholder="e.g. 5">
+                <input type="number" id="count" name="Count" placeholder="e.g. 5" min="1" value="1">
             </div>
 
             <div class="form-group">
                 <label for="status">Status</label>
-                <select id="status" name="Status">
+                <select id="status" name="Status" required>
                     <option>Active</option>
                     <option>Issued</option>
                     <option>Damaged</option>
@@ -155,23 +187,10 @@
                 <label for="vendor">Vendor</label>
                 <select id="vendor" name="VendorId">
                     <option value="">Select Vendor</option>
-                    <option>HP</option>
-                    <option>Dell</option>
-                    <option>Lenovo</option>
-                    <!-- Populate from Vendor table -->
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="trackingNo">Tracking Number (RFID)</label>
-                <input type="text" id="trackingNo" name="TrackingNumber" placeholder="Optional">
-            </div>
-
-            <div class="form-group">
-                <label for="trackingStatus">Tracking Status</label>
-                <select id="trackingStatus" name="TrackingStatus">
-                    <option>Tracked</option>
-                    <option>Not Tracked</option>
+                    @foreach (var v in (List<AssetManagementProject.Models.Vendor>)ViewBag.Vendors)
+                    {
+                        <option value="@v.VendorId">@v.Name</option>
+                    }
                 </select>
             </div>
 
@@ -182,29 +201,48 @@
         </form>
     </div>
 
-    <!-- 🔓 Table always visible -->
     <hr />
     <h3 style="text-align:center; margin-top:40px;">Registered Assets</h3>
+
     <table>
         <thead>
             <tr>
-                <th>Asset ID</th>
                 <th>Name</th>
                 <th>Type</th>
                 <th>Count</th>
                 <th>Status</th>
                 <th>Vendor</th>
-                <th>Tracking No</th>
                 <th>Warranty End</th>
             </tr>
         </thead>
-        <tbody>
-            @* Populate rows dynamically here *@
-            <tr>
-                <td colspan="8">No assets available.</td>
-            </tr>
+        <tbody id="assetTableBody">
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="6">No assets available.</td>
+                </tr>
+            }
+            else
+            {
+                foreach (var a in Model)
+                {
+                    <tr>
+                        <td>@a.AssetName</td>
+                        <td>@a.AssetType</td>
+                        <td>@a.Count</td>
+                        <td>@a.Status</td>
+                        <td>@a.Vendor?.Name</td>
+                        <td>@(a.WarrantyEnd?.ToString("yyyy-MM-dd") ?? "-")</td>
+                    </tr>
+                }
+            }
         </tbody>
     </table>
+</div>
+
+<div id="toast">
+    <span id="toastMessage"></span>
+    <button onclick="hideToast()">×</button>
 </div>
 
 <script>
@@ -220,4 +258,67 @@
             registerButton.style.display = "inline-block";
         }
     }
+
+    function showToast(message, isSuccess = true) {
+        const toast = document.getElementById("toast");
+        const msg = document.getElementById("toastMessage");
+        msg.textContent = message;
+        toast.classList.toggle("error", !isSuccess);
+        toast.style.display = "block";
+        setTimeout(() => hideToast(), 3000);
+    }
+
+    function hideToast() {
+        const toast = document.getElementById("toast");
+        toast.style.display = "none";
+    }
+
+    document.getElementById("assetForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const form = this;
+        const formData = new FormData(form);
+
+        try {
+            const resp = await fetch('@Url.Action("RegisterAsset", "Asset")', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    // antiforgery token is already in formData
+                }
+            });
+
+            const data = await resp.json();
+
+            if (resp.ok && data.success) {
+                showToast(data.message || "Asset registered successfully.");
+
+                // update table
+                const tbody = document.getElementById("assetTableBody");
+                const vendorName = document.querySelector("#vendor option:checked")?.text || "";
+                const newRow = document.createElement("tr");
+                newRow.innerHTML = `
+                    <td>${formData.get("AssetName") || ""}</td>
+                    <td>${formData.get("AssetType") || ""}</td>
+                    <td>${formData.get("Count") || ""}</td>
+                    <td>${formData.get("Status") || ""}</td>
+                    <td>${vendorName}</td>
+                    <td>${formData.get("WarrantyEnd") || "-"}</td>
+                `;
+
+                // remove "no assets" if it exists
+                if (tbody.children.length === 1 && tbody.children[0].children[0].colSpan == 6) {
+                    tbody.innerHTML = "";
+                }
+                tbody.prepend(newRow);
+                form.reset();
+                toggleForm();
+            } else {
+                let msg = data?.message || "Failed to register asset.";
+                showToast(msg, false);
+            }
+        } catch (ex) {
+            console.error(ex);
+            showToast("Network or server error.", false);
+        }
+    });
 </script>
