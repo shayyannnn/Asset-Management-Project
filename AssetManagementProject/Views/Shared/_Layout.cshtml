@@ -86,15 +86,17 @@
                             <a asp-controller="SecurityAudit" asp-action="AuditTrial"
                                class="@(currentAction == "AuditTrial" ? "active" : "")">Audit Trial</a>
                         </li>
-                        <li>
-                            <a asp-controller="SecurityAudit" asp-action="VulnerabilityTracking"
-                               class="@(currentAction == "VulnerabilityTracking" ? "active" : "")">Vulnerability Tracking</a>
-                        </li>
+                       
                         <li>
                             <a asp-controller="SecurityAudit" asp-action="LogAlerts"
                                class="@(currentAction == "LogAlerts" ? "active" : "")">Access Log Alerts</a>
                         </li>
                     </ul>
+                </li>
+
+                <li>
+                    <a asp-controller="SecurityAudit" asp-action="VulnerabilityTracking"
+                       class="@(currentAction == "VulnerabilityTracking" ? "active" : "")">Vulnerability Tracking</a>
                 </li>
 
                 <li>
