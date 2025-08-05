@@ -38,7 +38,7 @@
         <canvas id="assetsByCategoryChart" width="400" height="400"></canvas>
     </div>
     <div class="card chart-card card-orange lower-right">
-        <h3>Bar Chart</h3>
+        <h3>Vulneribility Overview</h3>
         <div class="chart-placeholder">[Bar Chart]</div>
     </div>
 </div>
@@ -57,47 +57,26 @@
     </ul>
 </div>
 
-
-
-    <div class="card card-mint">
-        <h3>Under Maintenance</h3>
-    </div>
-
-
-@section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const ctx = document.getElementById('assetsByCategoryChart').getContext('2d');
-
-        const labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
-                    Model.AssetsByCategory.Select(c => c.Category)
-            ));
-
-    const dataValues = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
-                Model.AssetsByCategory.Select(c => c.Count)
-        ));
-
-    new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Assets by Category',
-                data: dataValues,
-                backgroundColor: [
-                    '#6a5acd', '#20b2aa', '#ffcc00', '#ff6347', '#2e8b57', '#ff8c00', '#8b0000'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                }
-            }
+<div class="card card-mint full-width">
+    <h3>Under Maintenance</h3>
+    <ul class="recent-assignments">
+        @foreach (var item in Model.MaintenanceData)
+        {
+            <li>
+                <span class="asset-name">@item.AssetName</span>
+                <span class="status">@item.Status</span>
+            </li>
         }
-    });
+    </ul>
+</div>
+
+<!-- Chart.js (loaded here for non-layout loads) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Embedded chart data (will be picked up by your shared JS) -->
+<script type="application/json" id="assetCategoryLabelsJson">
+    @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AssetsByCategory.Select(c => c.Category)))
 </script>
-}
+<script type="application/json" id="assetCategoryDataJson">
+    @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AssetsByCategory.Select(c => c.Count)))
+</script>

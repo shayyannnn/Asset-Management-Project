@@ -11,6 +11,12 @@ public class RecentAssignmentData
     public DateOnly DateAssigned { get; set; }
 }
 
+public class SMaintenanceData
+{
+    public string AssetName { get; set; }
+    public string Status { get; set; }
+}
+
 public class DashboardViewModel
 {
     public int TotalAssets { get; set; }
@@ -18,4 +24,5 @@ public class DashboardViewModel
     public int UnderMaintenance { get; set; }
     public List<AssetCategoryData> AssetsByCategory { get; set; }
     public List<RecentAssignmentData> RecentAssignments { get; set; }
+    public List<SMaintenanceData> MaintenanceData { get; set; } 
 }

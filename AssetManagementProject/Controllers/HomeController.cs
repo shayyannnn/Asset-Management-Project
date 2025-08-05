@@ -41,6 +41,15 @@ namespace AssetManagementProject.Controllers
              })
             .ToListAsync();
 
+            var SMaintenanceData = await _context.Assets
+                .Where(a => a.Status == "UnderMaintenance")
+                .Select(a => new SMaintenanceData
+                {
+                    AssetName = a.AssetName,
+                    Status = a.Status
+                })
+                .Take(5)
+                .ToListAsync();
 
             var model = new DashboardViewModel
             {
@@ -48,7 +57,8 @@ namespace AssetManagementProject.Controllers
                 AssignedAssets = assignedAssets,
                 UnderMaintenance = underMaintenance,
                 AssetsByCategory = assetsByCategory,
-                RecentAssignments = recentAssignments
+                RecentAssignments = recentAssignments,
+                MaintenanceData = SMaintenanceData
             };
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
