@@ -6,7 +6,7 @@
     ViewData["Title"] = "Asset Registration";
     Layout = null;
 }
- 
+
 <style>
     h2 {
         color: white;
@@ -137,7 +137,7 @@
     }
 
         #formContainer.expanded {
-            max-height: 2000px; /* large enough to fit all contents */
+            max-height: 2000px; 
             opacity: 1;
             transform: translateY(0);
         }
@@ -150,24 +150,22 @@
         <button id="toggleRegisterButton" type="button" onclick="toggleForm()">Register Asset</button>
     </div>
 
-    <div id="formContainer" style="display: none;">
+    <div id="formContainer">
         <form id="assetForm" method="post" asp-controller="Asset" asp-action="RegisterAsset">
             @Html.AntiForgeryToken()
             <div class="form-group">
                 <label for="assetName">Asset Name</label>
                 <input type="text" id="assetName" name="AssetName" placeholder="Enter Asset Name" required>
             </div>
-
-            <div class="form-group">
+             <div class="form-group">
                 <label for="assetType">Asset Type</label>
-                <select id="assetType" name="AssetType" required>
-                    <option value="">Select Type</option>
-                    <option>Laptop</option>
-                    <option>Monitor</option>
-                    <option>Printer</option>
-                    <option>PC</option>
+                <select name="AssetType">
+                    @foreach (var type in (List<AssetType>)ViewBag.AssetTypes)
+                    {
+                      <option value="@type.AssetType1">@type.AssetTypeDp</option>
+                    }
                 </select>
-            </div>
+            </div> 
 
             <div class="form-group">
                 <label for="count">Count</label>
@@ -263,15 +261,14 @@
 </div>
 
 <script>
-        function toggleForm() {
+    function toggleForm() {
         const form = document.getElementById("formContainer");
         const registerButton = document.getElementById("toggleRegisterButton");
 
-        form.style.display = "block"; 
+        form.style.display = "block";
         form.classList.add("expanded");
         registerButton.style.display = "none";
     }
-
 
     function collapseForm() {
         const form = document.getElementById("formContainer");
@@ -279,10 +276,9 @@
 
         form.classList.remove("expanded");
 
-        // Delay showing the button until animation completes
         setTimeout(() => {
             registerButton.style.display = "inline-block";
-        }, 400); // Adjust based on your CSS transition time
+        }, 400); 
     }
 
     function showToast(message, isSuccess = true) {
@@ -303,6 +299,9 @@
         e.preventDefault();
         const form = this;
         const formData = new FormData(form);
+
+        const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+        const token = tokenInput ? tokenInput.value : '';
 
         try {
             const resp = await fetch('@Url.Action("RegisterAsset", "Asset")', {
@@ -346,4 +345,3 @@
         }
     });
 </script>
-

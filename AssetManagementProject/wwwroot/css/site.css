@@ -13,7 +13,7 @@ body {
 
 .top-header {
     position: relative;
-    z-index: 10; /* Higher than sidebar z-index:1 */
+    z-index: 10;
     background-color: #1f1f1f;
     color: #ffffff;
     padding: 20px 30px;
@@ -211,7 +211,7 @@ body {
 .card-lightgray {
     background-color: #2e2e2e;
     border: 1px solid #888;
-    margin-right: 40px; /* Adjust value as needed */
+    margin-right: 40px;
     margin-top: 20px;
     border-radius: 8px
 }
@@ -233,7 +233,7 @@ body {
 }
 
 .full-width {
-    width: calc(100% - 60px); /* Matches margin of 30px on each side */
+    width: calc(100% - 60px); 
 }
 
 

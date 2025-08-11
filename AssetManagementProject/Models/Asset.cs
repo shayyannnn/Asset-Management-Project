@@ -25,6 +25,8 @@ public partial class Asset
 
     public int? IssuanceId { get; set; }
 
+    public string? AssetTypeId { get; set; }
+
     public virtual ICollection<AssetSpec> AssetSpecs { get; set; } = new List<AssetSpec>();
 
     public virtual AssetType? AssetTypeNavigation { get; set; }

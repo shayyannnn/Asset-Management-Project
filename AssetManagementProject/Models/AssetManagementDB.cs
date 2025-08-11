@@ -70,8 +70,13 @@ public partial class AssetManagementDB : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("asset_name");
             entity.Property(e => e.AssetType)
-                .HasMaxLength(255)
+                .HasMaxLength(50)
+                .IsUnicode(false)
                 .HasColumnName("asset_type");
+            entity.Property(e => e.AssetTypeId)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("asset_type_id");
             entity.Property(e => e.Count).HasColumnName("count");
             entity.Property(e => e.IssuanceId).HasColumnName("issuance_id");
             entity.Property(e => e.Status)
@@ -87,8 +92,9 @@ public partial class AssetManagementDB : DbContext
             entity.Property(e => e.WarrantyEnd).HasColumnName("warranty_end");
 
             entity.HasOne(d => d.AssetTypeNavigation).WithMany(p => p.Assets)
+                .HasPrincipalKey(p => p.AssetType1)
                 .HasForeignKey(d => d.AssetType)
-                .HasConstraintName("FK__Asset__asset_typ__6C190EBB");
+                .HasConstraintName("FK_Asset_AssetTypeName");
 
             entity.HasOne(d => d.Issuance).WithMany(p => p.Assets)
                 .HasForeignKey(d => d.IssuanceId)
@@ -120,9 +126,15 @@ public partial class AssetManagementDB : DbContext
         {
             entity.HasKey(e => e.AssetTypeId).HasName("PK__AssetTyp__95A1E2BCA80182D9");
 
+            entity.HasIndex(e => e.AssetType1, "UQ_AssetTypes_Asset_Type").IsUnique();
+
             entity.Property(e => e.AssetTypeId)
                 .HasMaxLength(255)
                 .HasColumnName("asset_type_id");
+            entity.Property(e => e.AssetType1)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Asset_Type");
             entity.Property(e => e.AssetTypeDp)
                 .HasMaxLength(255)
                 .HasColumnName("asset_type_dp");

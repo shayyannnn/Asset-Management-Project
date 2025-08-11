@@ -11,5 +11,7 @@ public partial class AssetType
 
     public string? Model { get; set; }
 
+    public string AssetType1 { get; set; } = null!;
+
     public virtual ICollection<Asset> Assets { get; set; } = new List<Asset>();
 }

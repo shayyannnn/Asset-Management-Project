@@ -1,4 +1,8 @@
-﻿@{
+﻿@model IEnumerable<AssetManagementProject.Models.Issuance>
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery antiforgery
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
+
+@{
     ViewData["Title"] = "Asset Assignment";
     Layout = null;
 }
@@ -17,6 +21,7 @@
         padding: 30px;
         border-radius: 12px;
         box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        position: relative;
     }
 
     .form-group {
@@ -29,23 +34,27 @@
         .form-group label {
             flex: 1;
             font-weight: bold;
+            color: #ddd;
         }
 
         .form-group input,
         .form-group select {
             flex: 2;
             padding: 8px;
-            border: 1px solid #ccc;
+            border: 1px solid #444;
             border-radius: 6px;
+            background: #1f2a33;
+            color: #fff;
         }
 
     .button-group {
-        ext-align: center;
+        text-align: center;
         margin-top: 30px;
         margin-bottom: 30px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 10px;
     }
 
         .button-group button {
@@ -68,13 +77,17 @@
         width: 100%;
         margin-top: 40px;
         border-collapse: collapse;
+        background: #0f1e27;
+        color: #eee;
+        border-radius: 6px;
+        overflow: hidden;
         box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
     th, td {
         padding: 12px;
         text-align: center;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #1f3a4f;
     }
 
     th {
@@ -87,61 +100,87 @@
         cursor: pointer;
     }
 
-    #assignmentForm {
-        transform: scaleY(0);
-        opacity: 0;
-        transform-origin: top;
-        transition: transform 0.3s ease, opacity 0.3s ease;
-        overflow: hidden;
-        margin-top: 20px;
-        display: block;
-        height: 0;
+    #toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        background: #28a745;
+        color: white;
+        border-radius: 8px;
+        display: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 1000;
+        min-width: 250px;
+        font-weight: 500;
     }
 
-        #assignmentForm.show {
-            transform: scaleY(1);
-            opacity: 1;
-            height: auto;
+        #toast.error {
+            background: #c0392b;
         }
 
-    
+        #toast button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+    .collapsible-form {
+        overflow: hidden;
+        max-height: 0;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: max-height 0.4s ease, opacity 0.4s ease, transform 0.4s ease;
+    }
+
+        .collapsible-form.expanded {
+            max-height: 2000px;
+            opacity: 1;
+            transform: translateY(0);
+        }
 </style>
 
 <div class="registration-container">
-
-
     <div class="button-group">
         <h2>Asset Assignment</h2>
         <button id="toggleAssignButton" type="button" onclick="toggleAssignForm()">Assign Asset</button>
     </div>
 
-    <!-- Hidden Form -->
-    <div id="assignmentForm" class="">
-        
-        <form method="post" asp-controller="Asset" asp-action="Assign">
+    <div id="assignmentForm" class="collapsible-form">
+        <form method="post" asp-controller="Asset" asp-action="AssignAsset">
+            @Html.AntiForgeryToken()
             <div class="form-group">
-                <label for="employment_id">Employment ID</label>
-                <input type="number" id="employment_id" name="EmploymentId" placeholder="Enter Employment ID" required />
+                <label for="asset_id">Asset</label>
+                <select id="asset_id" name="AssetId" required>
+                    <option value="">-- Select Asset --</option>
+                    @foreach (var asset in ViewBag.Assets as List<AssetManagementProject.Models.Asset>)
+                    {
+                        <option value="@asset.AssetId">@asset.AssetName (@asset.AssetType)</option>
+                    }
+                </select>
             </div>
 
             <div class="form-group">
-                <label for="asset_id">Asset ID</label>
-                <input type="text" id="asset_id" name="AssetId" placeholder="Enter Asset ID" required />
+                <label for="employment_id">Employment ID</label>
+                <input type="number" id="employment_id" name="EmploymentId" required />
             </div>
 
             <div class="form-group">
                 <label for="issued_to">Issued To</label>
-                <input type="text" id="issued_to" name="IssuedTo" placeholder="Full Name" required />
+                <input type="text" id="issued_to" name="IssuedTo" required />
             </div>
 
             <div class="form-group">
                 <label for="designation">Designation</label>
-                <input type="text" id="designation" name="Designation" placeholder="e.g. Manager" />
+                <input type="text" id="designation" name="Designation" />
             </div>
 
             <div class="form-group">
                 <label for="department_id">Department</label>
-                <input type="text" id="department_id" name="DepartmentId" placeholder="Department Name or ID" />
+                <input type="text" id="department_id" name="DepartmentId" />
             </div>
 
             <div class="form-group">
@@ -151,16 +190,17 @@
 
             <div class="form-group">
                 <label for="building">Building</label>
-                <input type="text" id="building" name="Building" placeholder="e.g. Block A" />
+                <input type="text" id="building" name="Building" />
             </div>
 
             <div class="form-group">
                 <label for="room">Room</label>
-                <input type="text" id="room" name="Room" placeholder="e.g. Room 201" />
+                <input type="text" id="room" name="Room" />
             </div>
 
             <div class="button-group">
-                <button type="submit">Assign Asset</button>
+                <button type="submit">Assign</button>
+                <button type="button" onclick="collapseForm()">Cancel</button>
                 <button type="reset">Clear</button>
             </div>
         </form>
@@ -173,7 +213,6 @@
     <table>
         <thead>
             <tr>
-                <th>Issuance ID</th>
                 <th>Employment ID</th>
                 <th>Asset ID</th>
                 <th>Issued To</th>
@@ -185,24 +224,118 @@
             </tr>
         </thead>
         <tbody>
-            @* Populate rows dynamically here *@
-            <tr>
-                <td colspan="8">No assets available.</td>
-            </tr>
+            @if (Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.EmploymentId</td>
+                        <td>@item.AssetId</td>
+                        <td>@item.IssuedTo</td>
+                        <td>@item.Designation</td>
+                        <td>@item.DepartmentId</td>
+                        <td>@(item.DateAssigned?.ToString("yyyy-MM-dd") ?? "-")</td>
+                        <td>@item.Building</td>
+                        <td>@item.Room</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="8">No assets available.</td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>
+
+<div id="toast">
+    <span id="toastMessage"></span>
+    <button onclick="hideToast()">×</button>
+</div>
+
 <script>
     function toggleAssignForm() {
         const form = document.getElementById("assignmentForm");
         const button = document.getElementById("toggleAssignButton");
 
-        form.classList.toggle("show");
-
-        if (form.classList.contains("show")) {
-            button.style.display = "none";
-        } else {
-            button.style.display = "inline-block";
-        }
+        form.classList.toggle("expanded");
+        button.style.display = form.classList.contains("expanded") ? "none" : "inline-block";
     }
+
+    function collapseForm() {
+        const form = document.getElementById("assignmentForm");
+        const button = document.getElementById("toggleAssignButton");
+
+        form.classList.remove("expanded");
+        setTimeout(() => {
+            button.style.display = "inline-block";
+        }, 400);
+    }
+
+    function showToast(message, isSuccess = true) {
+        const toast = document.getElementById("toast");
+        const msg = document.getElementById("toastMessage");
+        msg.textContent = message;
+        toast.classList.toggle("error", !isSuccess);
+        toast.style.display = "block";
+        setTimeout(() => hideToast(), 3000);
+    }
+
+    function hideToast() {
+        document.getElementById("toast").style.display = "none";
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("assignmentForm");
+
+        form.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+            formData.append("__RequestVerificationToken", token);
+
+            try {
+                const resp = await fetch("/Asset/AssignAsset", {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                    }
+                });
+
+                const data = await resp.json();
+
+                if (resp.ok && data.success) {
+                    showToast(data.message || "Asset assigned successfully.");
+
+                    const tbody = document.querySelector("table tbody");
+                    const newRow = document.createElement("tr");
+                    newRow.innerHTML = `
+                        <td>${formData.get("EmploymentId") || ""}</td>
+                        <td>${formData.get("AssetId") || ""}</td>
+                        <td>${formData.get("IssuedTo") || ""}</td>
+                        <td>${formData.get("Designation") || "-"}</td>
+                        <td>${formData.get("DepartmentId") || "-"}</td>
+                        <td>${formData.get("DateAssigned") || "-"}</td>
+                        <td>${formData.get("Building") || "-"}</td>
+                        <td>${formData.get("Room") || "-"}</td>
+                    `;
+
+                    const noAssetsRow = tbody.querySelector("tr td[colspan='8']");
+                    if (noAssetsRow) noAssetsRow.parentElement.remove();
+
+                    tbody.prepend(newRow);
+                    form.reset();
+                    collapseForm();
+                } else {
+                    showToast(data?.message || "Failed to assign asset.", false);
+                }
+            } catch (error) {
+                console.error(error);
+                showToast("Network or server error.", false);
+            }
+        });
+    });
 </script>
